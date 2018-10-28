@@ -3,7 +3,7 @@ These are my projects to CS35L (Software Construction Laboratory) Spring 2018, t
 
 
 # Assignment Descriptions
-Getting to know your system (Unix, Emacs)
+Getting to know your system (Unix, Emacs) //
 Shell scripting (Bash Scripts)
 Modifying and rewriting software (Python)
 C programming and debugging (C, GDB)
