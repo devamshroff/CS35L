@@ -5,18 +5,18 @@ These are my projects to CS35L (Software Construction Laboratory) Spring 2018, t
 # Assignment Descriptions
 Getting to know your system (Unix, Emacs) 
 
-Shell scripting (Bash Scripts)
+1. Shell scripting (Bash Scripts)
 
-Modifying and rewriting software (Python)
+2. Modifying and rewriting software (Python)
 
-C programming and debugging (C, GDB)
+3. C programming and debugging (C, GDB)
 
-System call programming and debugging (C, GDB)
+4. System call programming and debugging (C, GDB)
 
-Multithreaded performance (C)
+5. Multithreaded performance (C)
 
-SSH setup and use in applications (SSH, Beaglebone)
+6. SSH setup and use in applications (SSH, Beaglebone)
 
-Dynamic linking (C)
+7. Dynamic linking (C)
 
-Change management (Git)
+8. Change management (Git)
