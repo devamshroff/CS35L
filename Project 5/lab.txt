@@ -1,0 +1,67 @@
+tr2b.c - transliteration buffered
+tr2u.com - transliteration unbuffered
+
+argc is the argument count
+argv* is an pointer array to the arguments
+
+1)
+First we write the tr2b.c program which is a buffered version of tr, used for
+transliteration. We use the getchar commands to take in each
+letter from stdin and check if there is a mapping defined for that
+particular letter, and if there is, use the corresponding transliteration
+and output using putchar. If not, simply output the char received from
+getchar through putchar.
+
+2)
+ the tr2u.c program is essentially the same except for the way reading and
+ writing is handled for the transliteration. Instead of taking in a char
+ and storing it in a variable using getchar, we use the direct syscall
+ read and for outputting we use write.
+
+3)
+then we run strace.
+first we create a big file(>5,000,000) using the following command:
+dd if=/dev/urandom of=big.txt bs=1M count=5
+a)
+strace -o strace_output0 ./tr2b abcde edcba < big.txt > bcopy.txt
+wc -l strace_output0 shows us that there were around 31 syscalls made.
+
+strace -o strace_output1 ./tr2u abc def < big.txt > ucopy.txt
+wc -l strace_output1 shows us that there were around 314559 syscalls made.
+
+strace -o strace_output2 ./tr2b abc def < big.txt
+wc -l strace_output2 gives 31 syscalls
+
+strace -o strace_output3 ./tr2u abc def < big.txt
+wc -l strace_output3 gives 25787 syscalls
+
+time ./tr2b abc def < big.txt > bcopy.txt
+
+real    0m0.004s
+user    0m0.002s
+sys     0m0.000s
+
+time ./tr2u abc def < big.txt > ucopy.txt
+
+real    0m17.306s
+user    0m1.993s
+sys     0m15.023s
+
+time ./tr2b abc def < big.txt
+real    0m0.003s
+user    0m0.000s
+sys     0m0.002s
+
+time ./tr2u abc def < big.txt
+seal	0m25.804s
+user	0m2.920s
+sys		0m18.469s
+
+The conclusion is that getchar and putchar are faster than
+read and write because of the difference in number of system calls made
+by each. Read and write require more syscalls because they write to stdout
+and getchar and putchar perform fewer syscalls because of their use
+of buffers, and are therefore faster.
+
+--removing carriage returns:
+tr -d '\r' < oldlab.txt > newlab.txt

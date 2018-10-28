@@ -1,0 +1,23 @@
+Name: Devam Shroff
+UID: 504923307
+
+Basically the pop-up window has a list of all the commits that have
+been made in tree structure in the top third of the screen,
+which has 3 subwindows: one for the name of the commit,
+one for the author, and one for the date on which the commit was made.
+
+Below this there is a textbox indicating the SHA1 ID: which a unique ID
+for every commit. Beside that there is a count of rows that indicates
+where you are on the list.
+One thing I noticed was that although the commit dates went further back
+as a scrolled down, the dates were not in script descending order, which
+could make commits a little harder to find.
+
+Once you select a commit, you can see the files that were
+impacted by the commit below it, and then on the bottom left there
+shows up the actual contents of the commit selected on the top in diff
+format, and the right there is a section that displays any comments
+that may have been appended to the commit.
+Above this section, there is a text box and a drop down list that is
+used for searching by name, author, etc and can make finding commits
+easier.

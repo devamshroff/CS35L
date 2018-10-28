@@ -1,0 +1,200 @@
+Name: Devam Shroff
+UID: 504923307
+						ASSIGNMENT 2
+file: log2.txt
+
+sort /usr/share/dict/words > words //sorted the words in words inside the directory dict and sent them to a new text file
+//stored the output into text files because buffer wont hold the whole list (gets cut from the top)
+
+wget "https://web.cs.ucla.edu/classes/spring18/cs35L/assign/assign2.html" -O web2.txt
+
+1.
+cat web2.txt | tr -c 'A-Za-z' '[\n*]' > ass1.txt
+command in question: tr -c 'A-Za-z' '[\n*]'
+  //deletes all the characters that aren't uppercase or lowercase alphabets between a-z and replaces them with a new line
+
+cat web2.txt | tr -cs 'A-Za-z' '[\n*]' > ass2.txt
+command in question: tr -cs 'A-Za-z' '[\n*]'
+  //replaces consecutive characters that are not in the first set (not alphabets), with a new line
+
+cat web2.txt | tr -cs 'A-Za-z' '[\n*]' | sort > ass3.txt
+command in question: tr -cs 'A-Za-z' '[\n*]' | sort
+  //does the same as the previous, and then sorts all the words in descending order
+
+cat web2.txt | tr -cs 'A-Za-z' '[\n*]' | sort -u > ass4.txt
+command in question: tr -cs 'A-Za-z' '[\n*]' | sort -u
+  //does the same as previous, and then removes duplicates
+
+cat web2.txt | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words > ass5.txt
+command in question: tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - words
+  //after doing everything in the previous command, it prints 3 columns.
+  //The first column is words unique to the html page, the second column is the unique to wordlist and the third column contains words that appear in both wordlist and the html page
+
+cat web2.txt | tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - 23 - words > ass6.txt
+command in question: tr -cs 'A-Za-z' '[\n*]' | sort -u | comm - 23 - words
+  //replaces consecutive characters that are not in the first set (not alphabets), with a new line
+  //goes to newline after every word but gets rid of consecutive characters that are not in the first set, like extra lines
+  //prints words in HTML page that are not in the wordList
+
+wget "http://mauimapp.com/moolelo/hwnwdseng.htm" -O translation.html
+
+2. Buildwords
+
+
+#!/bin/bash
+
+#only get the words that are enclosed with the td tags
+grep -o '<td>.*</td>' |
+
+#remove lines that only contain "<td></td>"
+sed '/^<td><\/td>$/d'  |
+
+#remove all odd lines
+sed '1~2d' |
+
+#remove all slashes so it is easier to remove tags
+sed 's/\///g' |
+
+#remove <u>s
+sed 's/<u>//g' |
+
+#remove <td>s
+sed 's/<td>//g' |
+
+#remove all commas replace with newline
+sed 's/,/\n/g' |
+
+#remove all spaces with newlines
+sed 's/ /\n/g' |
+
+#remove empty lines
+sed '/^$/d' |
+
+#replace backticks with single quotes
+sed "s/\`/'/g" |
+
+#replace all uppercase letters with their lowercase versions
+tr [:upper:] [:lower:] |
+
+#delete <small>s
+sed 's/<small>//g' |
+
+#delete all characters not in the hawaiian alphabet
+grep -v "[^pk'mnwlhaeiou]" |
+
+sort -u
+
+3. Running Shell Script
+chmod +x buildwords
+cat translation.html | ./buildwords > hwords
+
+4. Spellchecker
+a) misspelled english words
+cat web2.txt |
+tr -cs 'A-Za-z' '[\n*]' |
+tr '[:upper:]' '[:lower:]' |
+sort -u |
+comm -23 - words > englishWrong
+
+#count the number of misspelled english words
+wc -w englishWrong
+
+There are 38 misspelled english words
+
+b) counting misspelled hawaiian words
+
+cat web2.txt |
+tr '[:upper:]' '[:lower:]' |
+tr -cs "pk\'mnwlhaeiou" '[\n*]' |
+sort -u |
+comm -23 - hwords > hawaiianWrong
+
+ wc -w hawaiianWrong
+199 misspelled hawaiian words
+
+c) words misspelled as English but not as Hawaiian
+cat englishWrong |
+tr -cs "pk\'mnwlhaeiou" '[\n*]' |
+sort -u |
+comm -12 - hwords > engMisHaw
+
+cat enMisHaw
+examples:
+halau
+po
+Wiki
+
+d) words misspelled as Hawaiian but not as english
+cat hawaiianWrong |
+tr -cs 'A-Za-z' '[\n*]' |
+sort -u |
+comm -12 - words > hawMisEng
+
+cat hawMisEng
+examples:
+a
+ail
+ain
+amine
+
+5. Homework Shell Scripting - sameln
+
+ALLFILES=`ls $1 | sort`
+HIDDENFILES=`ls -a $1 | grep '^\.' | sort`
+let counter=0
+declare -a LIST
+
+restore="$IFS"
+IFS=$'\n'
+
+for FILE in $HIDDENFILES
+do
+  if [ ! -h "$1/$FILE" ]
+  then
+     if [ ! -r "$1/$FILE" ]
+     then
+	echo "$1/$FILE: No Read Access"
+      	continue
+     fi
+     if [ -f "$1/$FILE" ]
+     then
+	LIST[$counter]="$1/$FILE"
+	let counter=counter+1
+     fi
+ fi
+done
+
+for FILE in $ALLFILES
+do
+  if [ ! -h "$1/$FILE" ]
+  then
+     if [ ! -r "$1/$FILE" ]
+     then
+	echo "$1/$FILE: No Read Access"
+	continue
+     fi
+     if [ -f "$1/$FILE" ]
+     	then
+	LIST[$counter]="$1/$FILE"
+	let counter=counter+1
+     fi
+  fi
+done
+
+for (( i=0; i<$counter; i++ ))
+do
+  for (( j=i+1; j<$counter; j++ ))
+    do
+    FILE1=${LIST[$i]}
+    FILE2=${LIST[$j]}
+    if [ $FILE1 == $FILE2 ]
+       then
+	continue
+    fi
+    cmp -s -- $FILE1 $FILE2
+    if [ $? == 0 ]
+    	  then
+    		ln -fP -- $FILE1 $FILE2
+    fi
+    done
+done

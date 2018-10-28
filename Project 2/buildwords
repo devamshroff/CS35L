@@ -1,0 +1,30 @@
+#!/bin/bash
+
+grep -o '<td>.*</td>' |
+
+sed '/^<td><\/td>$/d'  | 
+
+sed '1~2d' | 
+
+sed 's/\///g' | 
+
+sed 's/<u>//g' |
+
+sed 's/<td>//g' | 
+
+sed 's/,/\n/g' |
+
+
+sed 's/ /\n/g' |
+
+sed '/^&/d' | 
+
+sed "s/\`/'/g" | 
+
+tr [:upper:] [:lower:] |
+
+sed 's/<small>//g' | 
+
+grep -v "[^pk'mnwlhaeiou]" | 
+
+sort -u

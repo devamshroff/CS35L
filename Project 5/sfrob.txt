@@ -1,0 +1,46 @@
+sfrob.txt
+comparison of commands sfrob, sfrobu, sfrobs, sfrobu -f and sfrobs -f.
+
+first I created a big file called bigFile, using the command
+dd if=/dev/urandom of=bigFile.txt bs=1M count=5
+
+here are the following time outputs:
+
+time ./sfrob < bigFile.txt > output.txt
+
+real    0m0.005s
+user    0m0.000s
+sys     0m0.003s
+
+time ./sfrobu < bigFile.txt > output.txt
+
+real    0m0.145s
+user    0m0.062s
+sys     0m0.037s
+
+time ./sfrobs < bigFile.txt > output.txt
+
+real    0m0.091s
+user    0m0.026s
+sys     0m0.028s
+
+time ./sfrobu -f < bigFile.txt > output.txt
+
+real    0m0.149s
+user    0m0.063s
+sys     0m0.041s
+
+time ./sfrobs -f < bigFile.txt > output.txt
+
+real    0m0.083s
+user    0m0.024s
+sys     0m0.028s
+
+Overall, as we can see from the above results of time, sfrob has
+the best overall performance with a real time of 0.005s, which is
+becuase sfrob makes fewer system calls, which are both buffered and
+optimized.
+Unsurprisingly, both sfrobu and sfrobu -f are slower than
+sfrobs and sfrobs -f respectively, which was expected because
+sfrob u and sfrobu -f perform many more syscalls than the shell
+script sfrobs, which results in a large overhead and poor performance.

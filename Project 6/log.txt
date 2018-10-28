@@ -1,0 +1,57 @@
+log.txt file for Lab6
+
+the result of sort --version is 8.29, which is up to date.
+To create the file of 10,000,000 random single-precision floating numbers,
+we use the command
+
+od -An -tfF -N 40000000
+
+The An option is to remove addresses, the tfF option represents floats,
+and the -N option limits the dump size to the following number of bytes.
+We choose 40000000 bytes because each float is 4 bytes so in that way we can
+limit the file to 10000000 floats.
+
+We then pipe this into
+tr -s ' ' '\n'
+to replace all spaces with a newline character so that each number is on a
+different line
+
+therefore the final command is
+od -An -tfF -N 40000000 < /dev/urandom | tr -s ' ' '\n'
+
+Then we time the sorts and send the output to /dev/null
+
+time -p sort -g floatdump > /dev/null
+real 21.40
+user 114.03
+sys 0.48
+
+time -p sort -g --parallel=1 floatdump > /dev/null
+real 102.56
+user 102.21
+sys 0.34
+
+time -p sort -g --parallel=2 floatdump > /dev/null
+real 54.70
+user 103.72
+sys 0.29
+
+time -p sort -g --parallel=4 floatdump > /dev/null
+real 33.37
+user 112.58
+sys 0.41
+
+time -p sort -g --parallel=8 floatdump > /dev/null
+real 20.99
+user 113.89
+sys 0.43
+
+
+Looking at all the different sorts, we see that the general sort and the parallel=8
+sort  have comparable times, while the sorts parallel=4, parallel=2, parallel=1 all
+had slower execution times. There is no notable trend when looking at the user time
+for all of the sorts. However, a trend can be seen in the system times of the
+parallel sorts. As the number of threads increase, so does the system time, which
+is attributed to the higher number of syscalls. From this it could be inferred that
+the general system sort is a multithreaded sort with 8 threads, which is why it has
+an execution time similar to that of the parallel=8 (8 threaded) sort.

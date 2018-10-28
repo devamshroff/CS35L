@@ -1,0 +1,51 @@
+Name: Devam Shroff
+ID: 504923307
+
+1)Suppose the other teams really had been observing all the bytes going across the network.
+ Is your resulting network still secure? If so, explain why, and explain whether your answer would change if 
+ (1) you assumed the other teams had also tapped your keyboards after you completed all 
+ client-server setup and had thereby obtained your team's keystrokes during later operation, or 
+ (2) you are booting off USB and you assume the other teams temporarily had physical control of the USB. 
+ If not, explain any weaknesses of your team's setups, focusing on possible attacks by such outside observers.
+ 
+Sending the data using ssh over the network is still safe from
+anyone on the network because any messages would first be encrypted
+using a public key which while anyone on the network can see, they
+can't decrypt the message without the recievers private key, which
+other people on the network do not have access to.
+After authentication, a session key is generated, which the client
+and server both have access to, and then this session key is used
+to encrypt the data. This way, another team would have no way to
+decrypt the session.
+
+  (1) Even if another team had gained access to all the keystrokes
+  we made on our keyboard, they still wont be able to figure out our
+  private key, as even with the same password, a different private
+  key would be generated every time. They would need physical access
+  to our private key along with our passphrase in order to decrypt
+  the message.
+
+  (2) However, if all of the system files are on a USB, another team
+  could gain access to the private key along with the passphrase and
+  then use it to decrypt all communications and gain access to the
+  host.
+
+All in all, they there is nothing any other team can do without our
+private key and passphrase together.
+
+2)
+Explain why the gpg2 --verify command in the following instructions doesn't 
+really verify that you personally created the file in question. 
+How would you go about fixing this problem?
+
+Why the gpg2 --verify command doesnt work:
+The function of the gpg2 --verify command is to verify if the target
+file and detached signatures match, so that anyone on the network
+can verify my public keys. This command really doesn't work
+because anyone can change the public key, create another tarball,
+and generate the detached signature.
+
+There is a simple fix for this: posting my public key on some
+common forum where everyone can see, like the internet, so that
+anyone can easily verify the authenticity of the file and make
+sure that the file hasn't been modified, with the public key.

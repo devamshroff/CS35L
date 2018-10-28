@@ -1,0 +1,199 @@
+
+wget ft ftp://ftp.gnu.org/gnu/coreutils-8.29.tar.xz.sig
+wget https://ftp.gnu.org/gnu/gnu-keyring.gpg
+
+1)
+--verify --keyring ./gnu-keyring.gpg coreutils-8.29.tar.xz.sig
+warning showed:
+gpg: WARNING: This key is not certified with a trusted signature!
+gpg:          There is no indication that the signature belongs to the owner.
+Primary key fingerprint: 6C37 DC12 121A 5006 BC1D  B804 DF6F D971 3060 37D9
+
+
+tar -xvf coreutils-8.29.tar.xz.sig
+
+./configure --prefix /u/cs/ugrad/devam/35L/proj3/
+make
+make install
+make install check
+
+reproduced bug by running:
+ls -a -A
+
+patch -p < bugfix.patch
+threw an error
+
+patch -p1 <bugfix.patch
+1 out of 1 hunk failed //NEWS gives an error
+
+autoreconf -f -i
+./configure --prefix /u/cs/ugrad/devam/35L/proj3/coreutils-8.29
+ran these commands because make was giving an error regarding the
+absence of an automake file
+make
+
+To check for buggy version of ls:
+ls -a -A
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+  ls -aA
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+  ls -Aa
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+  ls -A -a
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+
+
+To check for corrected version of ls:
+./src/ls -a -A
+    output:
+    ABOUT-NLS       ChangeLog      GNUmakefile  man
+    aclocal.m4      config.log     init.cfg     NEWS
+    AUTHORS         config.status  INSTALL      NEWS.rej
+    autom4te.cache  configure      lib          po
+    bootstrap       configure.ac   m4           .prev-version
+    bootstrap.conf  COPYING        .mailmap     README
+    bugfix.patch    dist-check.mk  maint.mk     src
+    bugfix.patch~   doc            Makefile     .tarball-version
+    build-aux       fix.patch      Makefile.am  tests
+    cfg.mk          gnulib-tests   Makefile.in  THANKS
+
+  ./src/ls -aA
+    output:
+ABOUT-NLS       ChangeLog      GNUmakefile  man
+aclocal.m4      config.log     init.cfg     NEWS
+AUTHORS         config.status  INSTALL      NEWS.rej
+autom4te.cache  configure      lib          po
+bootstrap       configure.ac   m4           .prev-version
+bootstrap.conf  COPYING        .mailmap     README
+bugfix.patch    dist-check.mk  maint.mk     src
+bugfix.patch~   doc            Makefile     .tarball-version
+build-aux       fix.patch      Makefile.am  tests
+cfg.mk          gnulib-tests   Makefile.in  THANKS
+
+  ./src/ls -Aa
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+  ./src/ls -A -a
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+
+To check for buggy version of ls after patching:
+  ls -a -A
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+  ls -aA
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+  ls -Aa
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+  ls -A -a
+    output:
+    .               build-aux      fix.patch     Makefile.am
+    ..              cfg.mk         gnulib-tests  Makefile.in
+    ABOUT-NLS       ChangeLog      GNUmakefile   man
+    aclocal.m4      config.log     init.cfg      NEWS
+    AUTHORS         config.status  INSTALL       NEWS.rej
+    autom4te.cache  configure      lib           po
+    bootstrap       configure.ac   m4            .prev-version
+    bootstrap.conf  COPYING        .mailmap      README
+    bugfix.patch    dist-check.mk  maint.mk      src
+    bugfix.patch~   doc            Makefile      .tarball-version
+
+
+
+shuf.py

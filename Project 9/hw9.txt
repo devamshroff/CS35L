@@ -1,0 +1,51 @@
+Name: Devam Shroff
+UID: 504923307
+File: hw9.txt
+
+First we checkout from v3.0 of Diffutils from my repository and create a
+new branch with the same command using the -b option.
+git checkout v3.0 -b quote
+
+I then applied the patch from the lab to replace ` with ' with
+patch -p0 < quote-3.0-patch.txt
+
+git status confirmed that only 6 files are changed as a result of the
+patch being applied. We then add these 6 files with
+
+git add .
+and then commit the changes in the file ChangeLog, which is a modified
+version of git-log.txt
+git commit -f ChangeLog
+
+I then generate my patch by doing:
+git format-patch -1 --stdout > formatted-patch.txt
+
+Which I then send to Sai Atmakuri, who will be my partner for the hw
+portion.
+
+I checkout of this branch into a branch called dcopy, in which I will
+apply the Sai's patch and then make check it.
+
+git checkout v3.0 -b dcopy
+
+git am < ../formatted-patch-partner.txt
+
+After seeing that the patch was applied, I then run
+./bootstrap
+./configure
+make
+make check
+make distdir
+
+I found that the ChangeLog file inside a new directory called
+diffutils-3.0.1-4de5
+has the first patch entry with author Sai Atmakuri,
+indicating that the patch worked. 
+
+Then to find the newest merge before/on the 1/25/2015, I first cd ~eggert
+and then after going into cd src/gnu/emacs and then I type in the
+command  gitk  which causes a window with a directory of merges to show up.
+I type 1/25/2015 in the search to find a new merge on that day, which is in the
+file gitk-screenshot.png
+
+

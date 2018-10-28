@@ -1,0 +1,103 @@
+Name: Devam Shroff
+UID: 504923307
+
+Flashing the beagleone (Following the steps in the link posted on Piazza):
+
+First I download the latest suitable image supported by BeagleBone Green
+Wireless, which is "Debian 9.3 2018-03-05 4GB SD IoT".
+
+Then, after installing 7-zip, I decompress the .img file, after which
+I write the image to my microSD card using Image Writer for Windows.
+
+After this, I insert my microSD card into my BeagleBone and then connect
+the BeagleBone to a power supply. The BeagleBone then started flashing in a
+a pattern -- the first and third LEDs alternated with the second and fourth,
+which indicates that the booting was in progress. This stopped after about
+40 minutes, signifying that the flashing was complete.
+
+I then connect my BeagleBone to my computer and open start.htm, where I
+confirm that my BeagleBone was connected and that the drivers are installed.
+
+Setting up the beaglebone:
+First I ssh into root, with password root. Then I connected to
+the right wifi using connnmanctl.
+updated the database using: sudo apt-get update
+install xauth and xvfb using: sudo apt-get install xauth
+and sudo apt-get install xvfb
+
+I then enable X11 forwarding by going into the necessary files and
+changing 'no' to 'yes' for a couple X11 forwarding options.
+Next I install firefox using: sudo apt-get install firefox-esr-l10n-en-gb
+
+I make sure I had all the openssh files by checking:
+dpkg --get-selections | grep openssh
+
+As I have both the client and the server files, I am good to go now.
+
+I do the lab portion of this assignment with 2 partners: Sai Atmakuri and
+Tanish Ambulkar.
+
+I first act as the client for Sai. I generate my public and private keys
+first
+ssh-keygen
+
+which I then save in "authorized-keys" by pressing enter.
+
+I then proceed to authenticate  my public key using
+ssh-copy-id -i devam@10.97.85.111
+
+I enter the password devam
+
+I then try the command ssh-add so that I can add my private key and be
+able to log into the host without a password. But this doesn't work, so I
+realize I have to use ssh-agent
+
+eval `ssh-agent -s`
+ssh-add
+
+I then attempt to ssh into the server using devam@10.97.85.111,
+and I am able to get into the directory without having to enter a password.
+
+I try to run the command firefox, and I get errors regarding the existence
+of a firefox backend.
+
+After doing some research, I realize that I need to start a session with
+X11 session forwarding, so then I re-ssh using
+
+ssh -X devam@10.97.85.111
+
+and then I am able to run commmands like xterm and firefox.
+I then created a file called test.txt to make sure that I am able to
+edit and write to the server.
+
+touch test.txt
+
+
+I then proceed to act as the server for sai.
+I first create an account for him using:
+
+sudo useradd -d /home/sai -m sai
+sudo passwd sai
+
+I set the password to sai for simplicity
+I then go into /home/sai and then create a .ssh directory for him using:
+
+sudo mkdir .ssh
+
+After that, I make sure sai has access permissions and change the ownership
+to user 'sai' so that he can log on and write.
+
+sudo chown -R sai .ssh
+sudo chmod 700 .ssh
+
+I send him my IP address by doing
+ifconfig
+
+which is 10.97.85.87
+
+He then follows what I did as the client and is successfully able to
+add his private key and ssh into the server without having to enter
+a password.
+
+I then repeated the same steps with Tanish Ambulkar, acting as both
+the server and the client.

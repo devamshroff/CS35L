@@ -1,0 +1,107 @@
+Name: Devam Shroff
+UID: 504923307
+
+1)First I clone diffutils using
+git clone https://git.savannah.gnu.org/git/diffutils.git
+
+then cd into diffutils.
+
+2)Get the log of changes through git log > git-log.txt
+
+3)We generate a list of tags used for Diffutils through git tag > git-tags.txt
+
+4)First we open git-log.txt and use ctrl+s to search for the text. We find it,
+and the commit has the ID 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f. We then
+use this ID to generate a patch
+
+git show 62ca21c8c1a5aa3488589dcb191a4ef04ae9ed4f > quote-patch.txt
+
+5) We then create a working copy of the repository using git checkout v3.0
+
+6) We apply the patch using
+   patch -p1 < quote_patch.txt
+
+we keep pressing enter even if some hunks fail. 
+   
+7) git status
+HEAD detached at v3.0
+Changes not staged for commit:
+  (use "git add <file>..." to update what will be committed)
+(use "git checkout -- <file>..." to discard changes in working directory)
+
+        modified:   NEWS
+        modified:   README
+        modified:   TODO
+        modified:   doc/diagmeet.note
+        modified:   ms/config.bat
+        modified:   ms/config.site
+        modified:   po/en.po
+        modified:   src/analyze.c
+        modified:   src/cmp.c
+        modified:   src/context.c
+        modified:   src/diff.c
+        modified:   src/diff.h
+        modified:   src/diff3.c
+        modified:   src/dir.c
+        modified:   src/ifdef.c
+        modified:   src/io.c
+        modified:   src/sdiff.c
+        modified:   src/side.c
+        modified:   src/system.h
+        modified:   src/util.c
+        modified:   tests/help-version
+
+
+We start going through these files now, using vc-diff (C-x v =) and then
+applying vc-revert (C-x v u) for the files
+without a .c extension.
+But for files with a .c extension we have to go through the diff file
+using diff-apply-hunk by going to the right hunks and then use
+C-u C-c C-a to undo it.
+
+10) we manually revert the rej files diff.c.rej and diff3.c.rej using
+intuition. We replace the backticks of those lines that are part of the
+c code ( not comments ).
+
+11)since we dont need the untracked files,w e use git clean -f to remove
+all of them.
+
+12)git status only reports these files:
+        modified:   src/cmp.c
+        modified:   src/diff.c
+        modified:   src/diff3.c
+        modified:   src/dir.c
+        modified:   src/sdiff.c
+        modified:   src/util.c
+
+create a patch file for this: git diff > quote-3.0-patch.txt
+
+13) then attempt to build the diffutils
+./bootstrap
+./configure
+
+make -- had to use lnxsrv01 for gets support -- patching additional file
+was erroneous
+
+make check
+
+then we ran
+diff . -
+dif --help
+and notice that all the output uses ' instead of `, making our patch
+successful.
+
+14)sanity check -- we compare the old version of Diffutils-3.0 to our
+diff. So we take our current branch of diffutils first and then commit
+it as a new branch we call "patch". After doing checkout with v3.0
+we then run:
+diffutils-3.0-patch/diff -pru diffutils-3.0 diffutils-3.0-patch >
+patch-test.txt
+
+15) We now run diff diffutils-3.0-patch.txt patch-test.txt and see that the
+differences are related to '' vs `` and are therefore infact innocuous.
+
+
+
+
+

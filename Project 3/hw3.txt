@@ -1,0 +1,16 @@
+1. The patch reduces the performance of ls because there is now an extra if
+statement that has to be executed multiple times.
+
+2. The fixed, new version should not introduce other errors because ls was
+the only thing that was changed.
+Other than a slightly increased runtime for ls, no other problems should be
+expected
+
+3. Outputs the Traceback and shows that there was an Index error
+the list was out of range. This is because the program does not account for a
+file with 0 lines.
+It only checks that whether numlines is less than 0,
+and then tries to access the first element at numlines.
+Therefore, it doesn't work.
+
+4. When run with python3, the program throws a syntax error, because automatic tuple unpacking compatible with python 3

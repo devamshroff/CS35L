@@ -1,0 +1,59 @@
+ALLFILES=`ls $1 | sort`
+HIDDENFILES=`ls -a $1 | grep '^\.' | sort`
+let counter=0
+declare -a LIST
+
+restore="$IFS"
+IFS=$'\n'
+
+for FILE in $HIDDENFILES
+do
+  if [ ! -h "$1/$FILE" ]
+  then
+     if [ ! -r "$1/$FILE" ]
+     then
+	echo "$1/$FILE: No Read Access"
+      	continue
+     fi
+     if [ -f "$1/$FILE" ]
+     then
+	LIST[$counter]="$1/$FILE"
+	let counter=counter+1
+     fi
+ fi
+done
+
+for FILE in $ALLFILES
+do
+  if [ ! -h "$1/$FILE" ]
+  then
+     if [ ! -r "$1/$FILE" ]
+     then
+	echo "$1/$FILE: No Read Access"
+	continue
+     fi
+     if [ -f "$1/$FILE" ]
+     	then
+	LIST[$counter]="$1/$FILE"
+	let counter=counter+1
+     fi
+  fi
+done
+
+for (( i=0; i<$counter; i++ ))
+do
+  for (( j=i+1; j<$counter; j++ ))
+    do
+    FILE1=${LIST[$i]}
+    FILE2=${LIST[$j]}
+    if [ $FILE1 == $FILE2 ]
+       then
+	continue
+    fi
+    cmp -s -- $FILE1 $FILE2
+    if [ $? == 0 ]
+    	  then
+    		ln -fP -- $FILE1 $FILE2
+    fi
+    done
+done
